@@ -1,0 +1,10 @@
+name: "RoboFont Extension builder"
+description: "Validate and build RoboFont extensions from repository and save it as a release."
+
+runs:
+  using: 
+  steps: 
+    - name: Build RoboFont Extension
+      if: always()
+      run: |
+        echo "build RoboFont Extension"
