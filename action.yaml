@@ -4,7 +4,11 @@ description: "Validate and build RoboFont extensions from repository and save it
 runs:
   using: 
   steps: 
-    - name: Build RoboFont Extension
+    - name: Validate RoboFont Extension
       if: always()
+      run: |
+        echo "validate extension"
+        
+    - name: Build RoboFont Extension
       run: |
         echo "build RoboFont Extension"
