@@ -1,5 +1,8 @@
 name: "RoboFont Extension builder"
 description: "Validate and build RoboFont extensions from repository and save it as a release."
+branding:
+  icon: "box"
+  color: "purple"
 
 runs:
   using: 
