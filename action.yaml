@@ -5,13 +5,38 @@ branding:
   color: "purple"
 
 runs:
-  using: 
-  steps: 
-    - name: Validate RoboFont Extension
-      if: always()
-      run: |
-        echo "validate extension"
-        
-    - name: Build RoboFont Extension
-      run: |
-        echo "build RoboFont Extension"
+  using: composite
+  steps:
+    - name: Checkout Repo
+      uses: actions/checkout@v4
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.9.13'
+
+    - name: Display Python version
+      shell: bash
+      run: python -c "import sys; print(sys.version)"
+
+    - name: Install ExtensionBundle
+      shell: bash
+      run: pip install --user git+https://github.com/typemytype/extensionBundle
+
+    - name: Build and validate
+      shell: bash
+      run: pack_extension --zip
+
+    - name: Upload artifact
+      if: startsWith(github.event.ref, 'refs/tags')
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ env.EXTENSION_PATH }}.zip
+        path: ./${{ env.EXTENSION_PATH }}.zip
+
+    - name: Release extension
+      if: startsWith(github.event.ref, 'refs/tags')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: ${{ env.EXTENSION_PATH }}.zip
+        generate_release_notes: true
