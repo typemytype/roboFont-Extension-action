@@ -31,12 +31,12 @@ runs:
       if: startsWith(github.event.ref, 'refs/tags')
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ env.EXTENSION_PATH }}.zip
-        path: ./${{ env.EXTENSION_PATH }}.zip
+        name: ${{ env.EXTENSION_ZIP_PATH }}
+        path: ./${{ env.EXTENSION_ZIP_PATH }}
 
     - name: Release extension
       if: startsWith(github.event.ref, 'refs/tags')
       uses: softprops/action-gh-release@v1
       with:
-        files: ${{ env.EXTENSION_PATH }}.zip
+        files: ${{ env.EXTENSION_ZIP_PATH }}
         generate_release_notes: true
