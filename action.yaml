@@ -25,11 +25,13 @@ runs:
 
     - name: Read version from yaml
       if: inputs.autotagging
+      shell: bash
       run : |
         echo version: ${{ steps.info-action.outputs.version }}
 
     - name: Create tag if not present
       if: inputs.autotagging
+      shell: bash
       run: |
         if [ $(git tag -l "${{ steps.info-action.outputs.version }}") ]; then
           echo "Tag ${{ steps.info-action.outputs.version }} exists"
