@@ -4,12 +4,43 @@ branding:
   icon: "box"
   color: "purple"
 
+inputs:
+  autotagging:
+    required: false
+    description: 'Create a tag when the version changes in the info.yaml.'
+    default: false
+
 runs:
   using: composite
   steps:
     - name: Checkout Repo
       uses: actions/checkout@v4
 
+    - name: Read yaml
+      if: inputs.autotagging
+      uses: actions-tools/yaml-outputs@v2
+      id: info-action
+      with:
+          file-path: info.yaml
+
+    - name: Read version from yaml
+      if: inputs.autotagging
+      run : |
+        echo version: ${{ steps.info-action.outputs.version }}
+
+    - name: Create tag if not present
+      if: inputs.autotagging
+      run: |
+        if [ $(git tag -l "${{ steps.info-action.outputs.version }}") ]; then
+          echo "Tag ${{ steps.info-action.outputs.version }} exists"
+        else
+          echo "Create tag ${{ steps.info-action.outputs.version }}"      
+          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+          git tag -a ${{ steps.info-action.outputs.version }} -m "Version ${{ steps.info-action.outputs.version }}"
+          git push origin "${{ steps.info-action.outputs.version }}"
+        fi
+        
     - name: Setup Python
       uses: actions/setup-python@v5
       with:
@@ -18,7 +49,7 @@ runs:
     - name: Display Python version
       shell: bash
       run: python -c "import sys; print(sys.version)"
-
+      
     - name: Install ExtensionBundle
       shell: bash
       run: pip install --user git+https://github.com/typemytype/extensionBundle
