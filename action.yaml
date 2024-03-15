@@ -28,7 +28,7 @@ runs:
       shell: bash
       run : |
         echo version: ${{ steps.info-action.outputs.version }}
-        git tag -l
+        echo git tag -l
 
     - name: Create tag if not present
       if: inputs.autotagging
