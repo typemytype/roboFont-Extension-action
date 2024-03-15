@@ -68,9 +68,20 @@ runs:
         name: ${{ env.EXTENSION_ZIP_PATH }}
         path: ./${{ env.EXTENSION_ZIP_PATH }}
 
-    - name: Release extension
-      if: startsWith(github.event.ref, 'refs/tags') || env.BUILD_RELEASE
+    - name: Release extension based on custom tag
+      if: startsWith(github.event.ref, 'refs/tags') && !env.BUILD_RELEASE
       uses: softprops/action-gh-release@v1
       with:
         files: ${{ env.EXTENSION_ZIP_PATH }}
         generate_release_notes: true
+
+    - name: Release extension based on autotagging
+      if: env.BUILD_RELEASE && !startsWith(github.event.ref, 'refs/tags')
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ steps.info-action.outputs.version }}
+        files: ${{ env.EXTENSION_ZIP_PATH }}
+        generate_release_notes: true
+
+
+
