@@ -15,6 +15,8 @@ runs:
   steps:
     - name: Checkout Repo
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
     - name: Read yaml
       if: inputs.autotagging
@@ -28,7 +30,7 @@ runs:
       shell: bash
       run : |
         echo version: ${{ steps.info-action.outputs.version }}
-        echo git tag -l
+        git tag -l
 
     - name: Create tag if not present
       if: inputs.autotagging
