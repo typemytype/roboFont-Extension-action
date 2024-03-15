@@ -36,11 +36,12 @@ runs:
         if [ $(git tag -l "${{ steps.info-action.outputs.version }}") ]; then
           echo "Tag ${{ steps.info-action.outputs.version }} exists"
         else
-          echo "Create tag ${{ steps.info-action.outputs.version }}"      
+          echo "Create tag ${{ steps.info-action.outputs.version }}"
           git config --global user.name "${GITHUB_ACTOR}"
           git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
           git tag -a ${{ steps.info-action.outputs.version }} -m "Version ${{ steps.info-action.outputs.version }}"
           git push origin "${{ steps.info-action.outputs.version }}"
+          echo "BUILD_RELEASE=true" >> $GITHUB_ENV
         fi
         
     - name: Setup Python
@@ -61,14 +62,14 @@ runs:
       run: pack_extension --zip
 
     - name: Upload artifact
-      if: startsWith(github.event.ref, 'refs/tags')
+      if: startsWith(github.event.ref, 'refs/tags') || env.BUILD_RELEASE
       uses: actions/upload-artifact@v4
       with:
         name: ${{ env.EXTENSION_ZIP_PATH }}
         path: ./${{ env.EXTENSION_ZIP_PATH }}
 
     - name: Release extension
-      if: startsWith(github.event.ref, 'refs/tags')
+      if: startsWith(github.event.ref, 'refs/tags') || env.BUILD_RELEASE
       uses: softprops/action-gh-release@v1
       with:
         files: ${{ env.EXTENSION_ZIP_PATH }}
