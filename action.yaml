@@ -32,15 +32,15 @@ runs:
         echo version: ${{ steps.info-action.outputs.version }}
         git tag -l
 
-    - name: Create tag if not present
+    - name: Create auto tag from info.yaml version
       if: inputs.autotagging
       shell: bash
       run: |
         if [ $(git tag -l "${{ steps.info-action.outputs.version }}") ]
         then
-          echo "Tag ${{ steps.info-action.outputs.version }} exists"
+          echo "Tag from info.yaml version ${{ steps.info-action.outputs.version }} exists"
         else
-          echo "Create tag ${{ steps.info-action.outputs.version }}"
+          echo "Create tag from info.yaml version ${{ steps.info-action.outputs.version }}"
           git config --global user.name "${GITHUB_ACTOR}"
           git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
           git tag -a ${{ steps.info-action.outputs.version }} -m "Version ${{ steps.info-action.outputs.version }}"
