@@ -36,7 +36,8 @@ runs:
       if: inputs.autotagging
       shell: bash
       run: |
-        if [ $(git tag -l "${{ steps.info-action.outputs.version }}") ]; then
+        if [ $(git tag -l "${{ steps.info-action.outputs.version }}") ]
+        then
           echo "Tag ${{ steps.info-action.outputs.version }} exists"
         else
           echo "Create tag ${{ steps.info-action.outputs.version }}"
@@ -71,12 +72,35 @@ runs:
         name: ${{ env.EXTENSION_ZIP_PATH }}
         path: ./${{ env.EXTENSION_ZIP_PATH }}
 
+    - name: Check Tag based on custom tag
+      if: startsWith(github.event.ref, 'refs/tags') && !env.BUILD_RELEASE
+      shell: bash
+      run: |
+        if [[ "${{ github.ref }}" == *b* ]]
+        then
+          echo "BUILD_AS_PRERELEASE=true" >> $GITHUB_ENV
+        else
+          echo "BUILD_AS_PRERELEASE=false" >> $GITHUB_ENV
+        fi
+
+    - name: Check Tag based on autotagging
+      if: env.BUILD_RELEASE && !startsWith(github.event.ref, 'refs/tags')
+      shell: bash
+      run: |
+        if [[ "${{ steps.info-action.outputs.version }}" == *b* ]]
+        then
+          echo "BUILD_AS_PRERELEASE=true" >> $GITHUB_ENV
+        else
+          echo "BUILD_AS_PRERELEASE=false" >> $GITHUB_ENV
+        fi
+              
     - name: Release extension based on custom tag
       if: startsWith(github.event.ref, 'refs/tags') && !env.BUILD_RELEASE
       uses: softprops/action-gh-release@v1
       with:
         files: ${{ env.EXTENSION_ZIP_PATH }}
         generate_release_notes: true
+        prerelease: ${{ env.BUILD_AS_PRERELEASE }}
 
     - name: Release extension based on autotagging
       if: env.BUILD_RELEASE && !startsWith(github.event.ref, 'refs/tags')
@@ -85,6 +109,6 @@ runs:
         tag_name: ${{ steps.info-action.outputs.version }}
         files: ${{ env.EXTENSION_ZIP_PATH }}
         generate_release_notes: true
-
+        prerelease: ${{ env.BUILD_AS_PRERELEASE }}
 
 
