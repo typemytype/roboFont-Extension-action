@@ -16,3 +16,6 @@ jobs:
         uses: typemytype/roboFont-Extension-action@v0.1.0
 
 ```
+
+
+Besides allowing actions in your repository, you'll also need to provide read and write permissions. Check Settings > Actions > General before setting the workflow.
