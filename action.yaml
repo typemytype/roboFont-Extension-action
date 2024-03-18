@@ -59,7 +59,7 @@ runs:
       
     - name: Install ExtensionBundle
       shell: bash
-      run: pip install --user git+https://github.com/typemytype/extensionBundle
+      run: pip install --user git+https://github.com/typemytype/roboFontExtensionBundle
 
     - name: Build and validate
       shell: bash
