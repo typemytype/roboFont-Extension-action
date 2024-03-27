@@ -1,6 +1,6 @@
 # RoboFont Extension Action
 
-RoboFont Extension builder for GitHub Actions
+RoboFont Extension builder for GitHub Actions based on the [RoboFont Extension Bundle](https://github.com/typemytype/roboFontExtensionBundle) package
 
 ## Usage
 
